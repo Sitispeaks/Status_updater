@@ -1,0 +1,88 @@
+{% extends "base.html" %}
+{% block start %}
+
+
+
+<div class="container">
+
+    <h3>Pizza App</h3>
+
+    <div class="row pt-3 mt-5 pt-sm-0">
+        
+        {% for p in pizza %}
+        <div class="col-lg-3 col-md-4 col-sm-6  mb-grid-gutter ">
+            <div class="card product-card shadow border pb-2"><a class="d-block" href="#quick-view" data-toggle="modal"><img
+                        class="card-img-top" src="{{p.image}}" alt="Pizza"></a>
+                <div class="card-body pt-1 pb-2">
+                    <h3 class="product-title font-size-md"><a href="#quick-view" data-toggle="modal">{{p.name}}</a></h3>
+                    
+
+
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="product-price"><span class="text-accent"> ₹ {{p.price}}</span></div>
+                        <button class="btn btn-primary btn-sm" onclick="createOrder({{p.id}})" type="button" data-toggle="toast"
+                            data-target="#cart-toast">+<i class="czi-cart font-size-base ml-1"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+
+
+    <div>
+        <h3 class="text-center mb-4">All Orders</h3>
+        <div class="table-responsive font-size-md">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>Order #</th>
+                        <th>Date Purchased</th>
+                        <th>Status</th>
+                        <th>Total</th>
+                        <th>View</th>
+                    </tr>
+                </thead>
+                <tbody id="mbody">
+                     {% for order in orders %}
+                    <tr>
+                        <td class="py-3"><a class="nav-link-style font-weight-medium font-size-sm" href="#order-details"
+                                data-toggle="modal">{{order.order_id}}</a></td>
+                        <td class="py-3">{{order.date}}</td>
+                        <td class="py-3"><span class="badge badge-info m-0">{{order.status}}</span></td>
+                        <td class="py-3">{{order.amount}}</td>
+                        <td class="py-3">
+                            <a href="/{{order.order_id}}" class="btn btn-danger btn-sm">View</a>
+                        </td>
+                    </tr>
+                    {%  endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.0/axios.min.js" integrity="sha512-DZqqY3PiOvTP9HkjIWgjO6ouCbq+dxqWoJZ/Q+zPYNHmlnI2dQnbJ5bxAHpAMw+LXRm4D72EIRXzvcHQtE8/VQ==" crossorigin="anonymous"></script>
+<script>
+
+    let output="";
+    function createOrder(id){
+    var el=document.getElementById("mbody");
+    axios.post('/api/order' , {'id': id})
+    .then(res =>{
+        console.log(res)
+        el.innerHTML += '<tr><td class="py-3"><a class="nav-link-style font-weight-medium font-size-sm" href="#order-details" data-toggle="modal">'+ res.data.data.order_id +'</a></td><td class="py-3">'+ res.data.data.date +'</td><td class="py-3"><span class="badge badge-info m-0">'+ res.data.data.status +'</span></td><td class="py-3">'+ res.data.data.amount +'</td><td class="py-3"><a href="/'+res.data.data.order_id+'"class="btn btn-danger btn-sm">View</a></td></tr>'
+                                    
+        
+    })
+
+    }
+
+</script>
+
+
+
+
+{% endblock %}
